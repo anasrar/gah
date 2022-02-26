@@ -1,0 +1,18 @@
+[submodule "submodules/tabulate"]
+	path = submodules/tabulate
+	url = https://github.com/p-ranav/tabulate.git
+[submodule "submodules/argparse"]
+	path = submodules/argparse
+	url = https://github.com/p-ranav/argparse.git
+[submodule "submodules/PicoSHA2"]
+	path = submodules/PicoSHA2
+	url = https://github.com/okdshin/PicoSHA2.git
+[submodule "submodules/plusaes"]
+	path = submodules/plusaes
+	url = https://github.com/kkAyataka/plusaes.git
+[submodule "submodules/ClipboardXX"]
+	path = submodules/ClipboardXX
+	url = https://github.com/Arian8j2/ClipboardXX.git
+[submodule "submodules/sqlite3"]
+	path = submodules/sqlite3
+	url = https://github.com/sqlite/sqlite.git

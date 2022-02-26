@@ -1,0 +1,81 @@
+name: Build and Release
+on: [workflow_dispatch]
+jobs:
+  build-linux:
+    name: Build Linux 🖥
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Download and Unzip SQLite 📥
+        run: |
+          wget -O sqlite.zip https://www.sqlite.org/2022/sqlite-amalgamation-3380000.zip
+          unzip -j sqlite.zip -d sqlite3
+
+      - name: Build 🛠
+        run: ./build.sh
+
+      - name: Zipping 📦
+        run: |
+          cd build/bin
+          zip -r ../../gah_linux.zip .
+
+      - name: Upload Artifact 📤
+        uses: actions/upload-artifact@v2
+        with:
+          name: uploads
+          path: gah_linux.zip
+
+  build-windows:
+    name: Build Windows 🖥
+    runs-on: windows-2019
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install Zip and Unzip 🧰
+        run: |
+          C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S zip unzip"
+
+      - name: Download and Unzip SQLite 📥
+        run: |
+          C:\msys64\usr\bin\wget.exe -O sqlite.zip https://www.sqlite.org/2022/sqlite-amalgamation-3380000.zip
+          C:\msys64\usr\bin\unzip.exe -j sqlite.zip -d sqlite3
+          C:\msys64\usr\bin\wget.exe -O sqlite_windows.zip https://www.sqlite.org/2022/sqlite-dll-win64-x64-3380000.zip
+          C:\msys64\usr\bin\unzip.exe -j sqlite_windows.zip -d sqlite3
+
+      - name: Add MSVC 🧰
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Build 🛠
+        run: build.bat
+
+      - name: Zipping 📦
+        run: |
+          cd build\bin\Release
+          C:\msys64\usr\bin\zip.exe -r ..\..\..\gah_windows.zip .
+
+      - name: Upload Artifact 📤
+        uses: actions/upload-artifact@v2
+        with:
+          name: uploads
+          path: gah_windows.zip
+
+      - name: Build For Git Bash 🛠
+        run: build_gitbash.bat
+
+      - name: Zipping 📦
+        run: |
+          cd build\bin\Release
+          C:\msys64\usr\bin\zip.exe -r ..\..\..\gah_windows_git_bash.zip .
+
+      - name: Upload Artifact 📤
+        uses: actions/upload-artifact@v2
+        with:
+          name: uploads
+          path: gah_windows_git_bash.zip
