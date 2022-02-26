@@ -23,6 +23,7 @@ jobs:
           repo_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
           draft: true
           prerelease: true
+          automatic_release_tag: latest
           files: |
             builds/*.zip
 
