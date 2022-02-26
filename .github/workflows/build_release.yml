@@ -16,7 +16,11 @@ jobs:
           unzip -j sqlite.zip -d sqlite3
 
       - name: Build 🛠
-        run: ./build.sh
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make
 
       - name: Zipping 📦
         run: |
@@ -53,7 +57,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Build 🛠
-        run: build.bat
+        run: .\build.bat
 
       - name: Zipping 📦
         run: |
@@ -67,7 +71,7 @@ jobs:
           path: gah_windows.zip
 
       - name: Build For Git Bash 🛠
-        run: build_gitbash.bat
+        run: .\build_gitbash.bat
 
       - name: Zipping 📦
         run: |
