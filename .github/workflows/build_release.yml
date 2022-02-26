@@ -15,6 +15,9 @@ jobs:
           wget -O sqlite.zip https://www.sqlite.org/2022/sqlite-amalgamation-3380000.zip
           unzip -j sqlite.zip -d sqlite3
 
+      - name: Add Qt 🧰
+        uses: jurplel/install-qt-action@v2
+
       - name: Build 🛠
         run: |
           mkdir -p build
