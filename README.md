@@ -1,4 +1,5 @@
 # gah
+
 simple cli github token manager, support linux and windows.
 
 ## Feature
@@ -18,12 +19,13 @@ search token on database
 ```bash
 gah search [string:id|note|username|expired] [string,int:query]
 ```
+
 ### Clipboard
 
 copy github token to clipboard
 
 ```bash
-gah clipboard [int:id] 
+gah clipboard [int:id]
 ```
 
 ### Add token
@@ -43,6 +45,7 @@ gah remove [int:id]
 ```
 
 ## Git integration
+
 simple integration with git, **keep in mind that command lack of git command flag and only support with https protocol**.
 
 ### Push
@@ -56,6 +59,7 @@ gah push [string:remote] [string:branch] [int:id] --force
 ```bash
 gah push [string:remote] [string:branch] [int:id] --rebase
 ```
+
 ### Clone
 
 ```bash
@@ -69,6 +73,7 @@ gah clone [string:url] [int:id] [string:directory] --recursive --branch <branch_
 ```bash
 git clone https://github.com/anasrar/gah.git --recursive && cd gah
 ```
+
 ### Compile SQLite
 
 You can compile SQLite by yourself or just download from [https://www.sqlite.org/download.html](https://www.sqlite.org/download.html), download the `sqlite-amalgamation-*.zip` file (and `sqlite-dll-win64-x64-*.zip` if you want to build from windows), extract to `sqlite3` folder
@@ -84,7 +89,7 @@ make
 make sqlite3.c
 ```
 
-#### Windows MVSC
+#### Windows MSVC
 
 ```batch
 cd sqlite3
