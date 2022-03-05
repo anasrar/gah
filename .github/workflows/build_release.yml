@@ -97,6 +97,8 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Build 🛠
+        env:
+          WITHCLANG: "ok"
         run: .\build.bat
 
       - name: Zipping 📦
@@ -111,6 +113,8 @@ jobs:
           path: gah_windows.zip
 
       - name: Build For Git Bash 🛠
+        env:
+          WITHCLANG: "ok"
         run: .\build_gitbash.bat
 
       - name: Zipping 📦
