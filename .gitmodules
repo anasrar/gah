@@ -16,3 +16,6 @@
 [submodule "submodules/sqlite3"]
 	path = submodules/sqlite3
 	url = https://github.com/sqlite/sqlite.git
+[submodule "submodules/clip"]
+	path = submodules/clip
+	url = https://github.com/dacap/clip.git
