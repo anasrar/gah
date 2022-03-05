@@ -1,5 +1,12 @@
 name: Build and Release
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release Tag"
+        required: true
+        default: "test"
+
 jobs:
   upload-release:
     name: Upload Release 🎁
@@ -17,15 +24,20 @@ jobs:
           name: uploads
           path: builds
 
+      - name: Unzip Linux AppImage 📥
+        run: |
+          unzip -j builds/gah_linux_appimage.zip -d builds
+
       - name: Create Release and Upload Assets 🎁
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
-          repo_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           draft: true
           prerelease: true
-          automatic_release_tag: test
+          automatic_release_tag: ${{ github.event.inputs.release_tag }}
           files: |
             builds/*.zip
+            builds/*.AppImage
 
   build-linux:
     name: Build Linux 🖥
@@ -57,15 +69,12 @@ jobs:
       - name: Zipping 📦
         run: |
           zip -r gah_linux_appimage.zip *.AppImage*
-          cd build/bin
-          zip -r ../../gah_linux.zip .
 
       - name: Upload Artifact 📤
         uses: actions/upload-artifact@v2
         with:
           name: uploads
           path: |
-            gah_linux.zip
             gah_linux_appimage.zip
 
   build-windows:
