@@ -7,15 +7,14 @@ file(GLOB SOURCE_FILES
      "src/*.h"
      "src/*.cpp"
 )
-# link sqlite3
-link_directories("${CMAKE_CURRENT_SOURCE_DIR}/sqlite3")
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE "GAH_VERSION=\"${PROJECT_VERSION}\"")
 
 # add sqlite3
 include_directories("sqlite3")
-target_link_libraries (${PROJECT_NAME} sqlite3)
+link_directories("${CMAKE_CURRENT_SOURCE_DIR}/sqlite3")
+target_link_libraries (${PROJECT_NAME} PRIVATE sqlite3)
 
 # add argparse
 include_directories("submodules/argparse/include")
@@ -25,15 +24,13 @@ include_directories("submodules/tabulate/single_include/")
 include_directories("submodules/PicoSHA2")
 # add plusaes
 include_directories("submodules/plusaes/include")
-# add clipboardxx
-include_directories("submodules/ClipboardXX/include")
-
-# clipboardxx using qt for unix
-if(NOT WIN32)
-     find_package(Qt5 COMPONENTS Gui REQUIRED)
-     target_link_libraries(${PROJECT_NAME} Qt5::Gui)
-     target_include_directories(${PROJECT_NAME} INTERFACE ${Qt5Gui_INCLUDE_DIRS})
-endif()
+# add clip
+include_directories("submodules/clip")
+set(CLIP_EXAMPLES OFF CACHE BOOL "Not compile clip examples" FORCE)
+set(CLIP_TESTS OFF CACHE BOOL "Not compile clip test" FORCE)
+set(CLIP_X11_WITH_PNG OFF CACHE BOOL "Not compile clip with libpng" FORCE)
+add_subdirectory("submodules/clip")
+target_link_libraries(${PROJECT_NAME} PRIVATE clip)
 
 set_target_properties(
      ${PROJECT_NAME}
