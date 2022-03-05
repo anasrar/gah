@@ -23,13 +23,13 @@ jobs:
           repo_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
           draft: true
           prerelease: true
-          automatic_release_tag: latest
+          automatic_release_tag: test
           files: |
             builds/*.zip
 
   build-linux:
     name: Build Linux 🖥
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -45,14 +45,18 @@ jobs:
         uses: jurplel/install-qt-action@v2
 
       - name: Build 🛠
+        env:
+          CC: gcc-9
+          CXX: g++-9
         run: |
-          mkdir -p build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
-          make
+          chmod +x build.sh
+          ./build.sh
+          chmod +x pack_appimage.sh
+          ./pack_appimage.sh
 
       - name: Zipping 📦
         run: |
+          zip -r gah_linux_appimage.zip *.AppImage*
           cd build/bin
           zip -r ../../gah_linux.zip .
 
@@ -60,7 +64,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: uploads
-          path: gah_linux.zip
+          path: |
+            gah_linux.zip
+            gah_linux_appimage.zip
 
   build-windows:
     name: Build Windows 🖥
