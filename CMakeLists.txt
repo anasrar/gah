@@ -8,12 +8,14 @@ file(GLOB SOURCE_FILES
      "src/*.cpp"
 )
 
+# link sqlite3
+link_directories("${CMAKE_CURRENT_SOURCE_DIR}/sqlite3")
+
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE "GAH_VERSION=\"${PROJECT_VERSION}\"")
 
 # add sqlite3
 include_directories("sqlite3")
-link_directories("${CMAKE_CURRENT_SOURCE_DIR}/sqlite3")
 target_link_libraries (${PROJECT_NAME} PRIVATE sqlite3)
 
 # add argparse
