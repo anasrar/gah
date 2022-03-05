@@ -10,7 +10,7 @@
 #include <sqlite3.h>
 #include <argparse/argparse.hpp>
 #include <tabulate/tabulate.hpp>
-#include <ClipboardXX.hpp>
+#include <clip.h>
 #include <picosha2.h>
 #include <plusaes/plusaes.hpp>
 
@@ -537,8 +537,7 @@ void GAH::action_clipboard_token(const int argc, const char *const argv[])
 		exit(1);
 	}
 
-	CClipboardXX clipboard;
-	clipboard << token;
+  clip::set_text(token);
 
 	std::cout << "token has been copied to clipboard" << std::endl;
 }
