@@ -27,7 +27,7 @@ gah search [string:id|note|username|expired] [string,int:query]
 copy github token to clipboard
 
 ```bash
-gah clipboard [int:id]
+gah clipboard [int:id] --show
 ```
 
 ### Add token
@@ -117,6 +117,16 @@ binary file in `build/bin`
 
 ### Windows / MSBuild
 
+if you want to compile with Clang set env variable before you run the batch script
+
+```bash
+# CMD
+SET WHITHCLANG=ok
+
+# powershell
+$env:WHITHCLANG = 'ok'
+```
+
 for cmd or powershell
 
 ```bash
@@ -133,7 +143,7 @@ binary file in `build\bin\Release`
 
 ## Database File
 
-You can not copy `.gahdb` file from linux to windows and vice versa, just make sure that when compiling using Windows that using Clang not MSVC, otherwise the `.gahdb` is not transferable.
+You can copy `.gahdb` file from linux to windows and vice versa, just make sure that when compiling using Windows that using Clang not MSVC, otherwise the `.gahdb` is not transferable.
 
 ### Linux
 
