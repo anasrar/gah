@@ -1,3 +1,4 @@
+AppDir/*
 build/
 sqlite3/
 *.vim

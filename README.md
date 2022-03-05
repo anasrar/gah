@@ -22,10 +22,12 @@ gah search [string:id|note|username|expired] [string,int:query]
 
 ### Clipboard
 
+**NOTICE**: some minimal linux distro with only window manager may not work, try to install `libx11-xcb`
+
 copy github token to clipboard
 
 ```bash
-gah clipboard [int:id]
+gah clipboard [int:id] --show
 ```
 
 ### Add token
@@ -103,7 +105,7 @@ Further information compiling SQLite check [https://github.com/sqlite/sqlite#com
 
 ### Dependency
 
-linux using qt5 gui for using clipboard, make sure `qt5-base` and `sqlite3` (optional, if you have it you don't need to compile / download sqlite3) was installed on your machine.
+linux using `xcb` and `pthread` for using clipboard, make sure `libx11-devel` or `libx11` and `sqlite3` (optional, if you have it you don't need to compile / download sqlite3) was installed on your machine.
 
 ### Linux
 
@@ -114,6 +116,16 @@ linux using qt5 gui for using clipboard, make sure `qt5-base` and `sqlite3` (opt
 binary file in `build/bin`
 
 ### Windows / MSBuild
+
+if you want to compile with Clang set env variable before you run the batch script
+
+```bash
+# CMD
+SET WHITHCLANG=ok
+
+# powershell
+$env:WHITHCLANG = 'ok'
+```
 
 for cmd or powershell
 
@@ -131,7 +143,7 @@ binary file in `build\bin\Release`
 
 ## Database File
 
-At the moment you can not copy `.gahdb` file from linux to windows and vice versa
+You can copy `.gahdb` file from linux to windows and vice versa, just make sure that when compiling using Windows that using Clang not MSVC, otherwise the `.gahdb` is not transferable.
 
 ### Linux
 
@@ -152,12 +164,14 @@ echo %HOMEDRIVE%%HOMEPATH%\.gahdb
 
 ## Build With
 
+- [CMake](https://cmake.org/)
+- [linuxdeployqt](https://github.com/probonopd/linuxdeployqt)
 - [SQLite](https://www.sqlite.org/index.html)
 - [PicoSHA2](https://github.com/okdshin/PicoSHA2)
 - [plusaes](https://github.com/kkAyataka/plusaes)
 - [argparse](https://github.com/p-ranav/argparse)
 - [tabulate](https://github.com/p-ranav/tabulate)
-- [ClipboardXX](https://github.com/Arian8j2/ClipboardXX)
+- [clip](https://github.com/dacap/clip)
 
 ## License
 

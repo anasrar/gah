@@ -1,5 +1,12 @@
 name: Build and Release
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release Tag"
+        required: true
+        default: "test"
+
 jobs:
   upload-release:
     name: Upload Release 🎁
@@ -17,19 +24,24 @@ jobs:
           name: uploads
           path: builds
 
+      - name: Unzip Linux AppImage 📥
+        run: |
+          unzip -j builds/gah_linux_appimage.zip -d builds
+
       - name: Create Release and Upload Assets 🎁
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
-          repo_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           draft: true
           prerelease: true
-          automatic_release_tag: latest
+          automatic_release_tag: ${{ github.event.inputs.release_tag }}
           files: |
             builds/*.zip
+            builds/*.AppImage
 
   build-linux:
     name: Build Linux 🖥
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -45,22 +57,25 @@ jobs:
         uses: jurplel/install-qt-action@v2
 
       - name: Build 🛠
+        env:
+          CC: gcc-9
+          CXX: g++-9
         run: |
-          mkdir -p build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
-          make
+          chmod +x build.sh
+          ./build.sh
+          chmod +x pack_appimage.sh
+          ./pack_appimage.sh
 
       - name: Zipping 📦
         run: |
-          cd build/bin
-          zip -r ../../gah_linux.zip .
+          zip -r gah_linux_appimage.zip *.AppImage*
 
       - name: Upload Artifact 📤
         uses: actions/upload-artifact@v2
         with:
           name: uploads
-          path: gah_linux.zip
+          path: |
+            gah_linux_appimage.zip
 
   build-windows:
     name: Build Windows 🖥
@@ -82,6 +97,8 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Build 🛠
+        env:
+          WITHCLANG: "ok"
         run: .\build.bat
 
       - name: Zipping 📦
@@ -96,6 +113,8 @@ jobs:
           path: gah_windows.zip
 
       - name: Build For Git Bash 🛠
+        env:
+          WITHCLANG: "ok"
         run: .\build_gitbash.bat
 
       - name: Zipping 📦
