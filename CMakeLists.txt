@@ -2,7 +2,14 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(DEFINED ENV{WITHCLANG})
+     set(CMAKE_GENERATOR_TOOLSET "ClangCL")
+endif()
+
 project(gah VERSION 1.0.0)
+if(DEFINED ENV{WITHCLANG})
+     project(${PROJECT_NAME} LANGUAGES "CXX")
+endif()
 file(GLOB SOURCE_FILES
      "src/*.h"
      "src/*.cpp"
