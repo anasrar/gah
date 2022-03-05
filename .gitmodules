@@ -10,9 +10,6 @@
 [submodule "submodules/plusaes"]
 	path = submodules/plusaes
 	url = https://github.com/kkAyataka/plusaes.git
-[submodule "submodules/ClipboardXX"]
-	path = submodules/ClipboardXX
-	url = https://github.com/Arian8j2/ClipboardXX.git
 [submodule "submodules/sqlite3"]
 	path = submodules/sqlite3
 	url = https://github.com/sqlite/sqlite.git
