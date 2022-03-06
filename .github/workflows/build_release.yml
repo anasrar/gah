@@ -2,6 +2,10 @@ name: Build and Release
 on:
   workflow_dispatch:
     inputs:
+      release_title:
+        description: "Release Title"
+        required: true
+        default: "test"
       release_tag:
         description: "Release Tag"
         required: true
@@ -44,6 +48,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
+          title: ${{ github.event.inputs.release_title }}
           draft: ${{ github.event.inputs.release_draft == 'true' }}
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
           automatic_release_tag: ${{ github.event.inputs.release_tag }}
