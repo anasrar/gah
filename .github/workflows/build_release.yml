@@ -6,6 +6,16 @@ on:
         description: "Release Tag"
         required: true
         default: "test"
+      release_draft:
+        description: "Release Draft"
+        type: boolean
+        required: true
+        default: true
+      prerelease:
+        description: "PreRelease"
+        type: boolean
+        required: true
+        default: true
 
 jobs:
   upload-release:
@@ -27,13 +37,15 @@ jobs:
       - name: Unzip Linux AppImage 📥
         run: |
           unzip -j builds/gah_linux_appimage.zip -d builds
+          rm builds/gah_linux_appimage.zip
+          mv "builds/gah-$(git rev-parse --short HEAD)-$(uname -m).AppImage" "builds/gah-$(uname -m).AppImage"
 
       - name: Create Release and Upload Assets 🎁
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          draft: true
-          prerelease: true
+          draft: ${{ github.event.inputs.release_draft == 'true' }}
+          prerelease: ${{ github.event.inputs.prerelease == 'true' }}
           automatic_release_tag: ${{ github.event.inputs.release_tag }}
           files: |
             builds/*.zip
