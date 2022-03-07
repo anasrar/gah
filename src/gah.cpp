@@ -225,7 +225,7 @@ std::string GAH::encrypt_token(const std::string &token, const std::string &pass
 	std::vector<unsigned char> key(picosha2::k_digest_size);
 	picosha2::hash256(password, key);
 
-	const unsigned long encrypted_size = plusaes::get_padded_encrypted_size(token.size());
+	const std::uint64_t encrypted_size = plusaes::get_padded_encrypted_size(token.size());
 	std::vector<unsigned char> encrypted_token(encrypted_size);
 	plusaes::encrypt_cbc((unsigned char*)token.data(), token.size(), &key[0], key.size(), &GAH::aes_iv, &encrypted_token[0], encrypted_token.size(), true);
 
@@ -257,9 +257,9 @@ std::string GAH::decrypt_token(std::string &token, const std::string &password)
 	while (ss >> std::hex >> cc)
 		encrypted_token.push_back(cc);
 
-	unsigned long encrypted_size;
+  std::uint64_t encrypted_size;
 	std::vector<unsigned char> encrypted_size_byte(encrypted_token.end() - sizeof(encrypted_size), encrypted_token.end());
-	encrypted_size = *reinterpret_cast<const unsigned long*>(&encrypted_size_byte[0]);
+	encrypted_size = *reinterpret_cast<const std::uint64_t*>(&encrypted_size_byte[0]);
 
 	encrypted_token.erase(encrypted_token.end() - sizeof(encrypted_size), encrypted_token.end());
 
