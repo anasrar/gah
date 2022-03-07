@@ -38,11 +38,14 @@ jobs:
           name: uploads
           path: builds
 
-      - name: Unzip Linux AppImage 📥
+      - name: Unzip Linux AppImage and Windows Exe 📥
         run: |
           unzip -j builds/gah_linux_appimage.zip -d builds
           rm builds/gah_linux_appimage.zip
           mv "builds/gah-$(git rev-parse --short HEAD)-$(uname -m).AppImage" "builds/gah-$(uname -m).AppImage"
+          unzip -j builds/gah_windows_git_bash.zip -d builds
+          mv builds/gah.exe builds/gah_git_bash.exe
+          unzip -j builds/gah_windows.zip -d builds
 
       - name: Create Release and Upload Assets 🎁
         uses: marvinpinto/action-automatic-releases@v1.2.1
@@ -53,7 +56,7 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
           automatic_release_tag: ${{ github.event.inputs.release_tag }}
           files: |
-            builds/*.zip
+            builds/*.exe
             builds/*.AppImage
 
   build-linux:
@@ -69,9 +72,6 @@ jobs:
         run: |
           wget -O sqlite.zip https://www.sqlite.org/2022/sqlite-amalgamation-3380000.zip
           unzip -j sqlite.zip -d sqlite3
-
-      - name: Add Qt 🧰
-        uses: jurplel/install-qt-action@v2
 
       - name: Build 🛠
         env:
@@ -107,15 +107,11 @@ jobs:
         run: |
           C:\msys64\usr\bin\wget.exe -O sqlite.zip https://www.sqlite.org/2022/sqlite-amalgamation-3380000.zip
           C:\msys64\usr\bin\unzip.exe -j sqlite.zip -d sqlite3
-          C:\msys64\usr\bin\wget.exe -O sqlite_windows.zip https://www.sqlite.org/2022/sqlite-dll-win64-x64-3380000.zip
-          C:\msys64\usr\bin\unzip.exe -j sqlite_windows.zip -d sqlite3
 
       - name: Add MSVC 🧰
         uses: ilammy/msvc-dev-cmd@v1
 
       - name: Build 🛠
-        env:
-          WITHCLANG: "ok"
         run: .\build.bat
 
       - name: Zipping 📦
@@ -130,8 +126,6 @@ jobs:
           path: gah_windows.zip
 
       - name: Build For Git Bash 🛠
-        env:
-          WITHCLANG: "ok"
         run: .\build_gitbash.bat
 
       - name: Zipping 📦
