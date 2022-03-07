@@ -27,7 +27,7 @@ gah search [string:id|note|username|expired] [string,int:query]
 copy github token to clipboard
 
 ```bash
-gah clipboard [int:id] --show
+gah clipboard [int:id] --password <password> --show
 ```
 
 ### Add token
@@ -35,7 +35,7 @@ gah clipboard [int:id] --show
 add token to database
 
 ```bash
-gah add [string:note] [string:username] [string:token] [string:expired]
+gah add [string:note] [string:username] [string:token] [string:expired] --password <password>
 ```
 
 ### Remove token
@@ -53,19 +53,19 @@ simple integration with git, **keep in mind that command lack of git command fla
 ### Push
 
 ```bash
-gah push [string:remote] [string:branch] [int:id] --force
+gah push [string:remote] [string:branch] [int:id] --password <password> --force
 ```
 
 ### Pull
 
 ```bash
-gah pull [string:remote] [string:branch] [int:id] --rebase
+gah pull [string:remote] [string:branch] [int:id] --password <password> --rebase
 ```
 
 ### Clone
 
 ```bash
-gah clone [string:url] [int:id] [string:directory] --recursive --branch <branch_name>
+gah clone [string:url] [int:id] [string:directory] --password <password> --recursive --branch <branch_name>
 ```
 
 ## Build
@@ -103,7 +103,7 @@ Further information compiling SQLite check [https://github.com/sqlite/sqlite#com
 
 ### Dependency
 
-linux using `xcb` and `pthread` for using clipboard, make sure `libx11-devel` or `libx11`
+linux using `xcb` and `pthread` for using clipboard, make sure `libx11-devel` or `libx11` is installed
 
 ### Linux
 
@@ -147,8 +147,8 @@ echo %HOMEDRIVE%%HOMEPATH%\.gahdb
 
 ## Roadmap
 
-- #1 Add more git command flags
-- #2 Create bash auto completion
+- Add more git command flags
+- Create bash auto completion
 
 ## Build With
 
