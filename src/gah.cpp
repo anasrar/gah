@@ -488,6 +488,10 @@ void GAH::action_clipboard_token(const int argc, const char *const argv[])
 		.default_value(std::string(""))
 		.help("id token");
 
+	program.add_argument("-p", "--password")
+		.default_value(std::string(""))
+		.help("input password directly from command");
+
 	program.add_argument("-s", "--show")
 		.default_value(false)
 		.implicit_value(true)
@@ -529,8 +533,16 @@ void GAH::action_clipboard_token(const int argc, const char *const argv[])
 	std::string token;
 	GAH::db_get_username_and_token_from_id(query["id"], username, token);
 
+  std::string password_arg = program.get<std::string>("--password");
 	std::string password;
-	GAH::utility_getline_password(password, username);
+  if(password_arg.empty())
+  {
+	  GAH::utility_getline_password(password, username);
+  }
+  else
+  {
+    password = password_arg;
+  }
 
 	try
 	{
@@ -570,6 +582,10 @@ void GAH::action_add_token(const int argc, const char *const argv[])
 		.default_value(std::string(""))
 		.help("github token expired date");
 
+	program.add_argument("-p", "--password")
+		.default_value(std::string(""))
+		.help("input password directly from command");
+
 	try
 	{
 		program.parse_args(argc, argv);
@@ -605,8 +621,16 @@ void GAH::action_add_token(const int argc, const char *const argv[])
 		query.insert({key, str_arg});
 	}
 
+  std::string password_arg = program.get<std::string>("--password");
 	std::string password;
-	GAH::utility_getline_password(password, query["username"]);
+  if(password_arg.empty())
+  {
+	  GAH::utility_getline_password(password, query["username"]);
+  }
+  else
+  {
+    password = password_arg;
+  }
 
 	query["token"] = "GAH_FLAG_" + query["token"];
 
@@ -689,6 +713,10 @@ void GAH::action_git_push(const int argc, const char *const argv[])
 		.default_value(std::string(""))
 		.help("id token");
 
+	program.add_argument("-p", "--password")
+		.default_value(std::string(""))
+		.help("input password directly from command");
+
 	program.add_argument("-f", "--force")
 		.default_value(false)
 		.implicit_value(true)
@@ -761,8 +789,16 @@ void GAH::action_git_push(const int argc, const char *const argv[])
 	std::string token;
 	GAH::db_get_username_and_token_from_id(query["id"], username, token);
 
+  std::string password_arg = program.get<std::string>("--password");
 	std::string password;
-	GAH::utility_getline_password(password, username);
+  if(password_arg.empty())
+  {
+	  GAH::utility_getline_password(password, username);
+  }
+  else
+  {
+    password = password_arg;
+  }
 
 	try
 	{
@@ -817,6 +853,10 @@ void GAH::action_git_pull(const int argc, const char *const argv[])
 	program.add_argument("id")
 		.default_value(std::string(""))
 		.help("id token");
+
+	program.add_argument("-p", "--password")
+		.default_value(std::string(""))
+		.help("input password directly from command");
 
 	program.add_argument("-r", "--rebase")
 		.default_value(false)
@@ -878,8 +918,16 @@ void GAH::action_git_pull(const int argc, const char *const argv[])
 	std::string token;
 	GAH::db_get_username_and_token_from_id(query["id"], username, token);
 
+  std::string password_arg = program.get<std::string>("--password");
 	std::string password;
-	GAH::utility_getline_password(password, username);
+  if(password_arg.empty())
+  {
+	  GAH::utility_getline_password(password, username);
+  }
+  else
+  {
+    password = password_arg;
+  }
 
 	try
 	{
@@ -935,6 +983,10 @@ void GAH::action_git_clone(const int argc, const char *const argv[])
 		.default_value(std::string(""))
 		.help("directory output");
 
+	program.add_argument("-p", "--password")
+		.default_value(std::string(""))
+		.help("input password directly from command");
+
 	program.add_argument("--recursive", "--recurse-submodules")
 		.default_value(false)
 		.implicit_value(true)
@@ -986,8 +1038,16 @@ void GAH::action_git_clone(const int argc, const char *const argv[])
 	std::string token;
 	GAH::db_get_username_and_token_from_id(query["id"], username, token);
 
+  std::string password_arg = program.get<std::string>("--password");
 	std::string password;
-	GAH::utility_getline_password(password, username);
+  if(password_arg.empty())
+  {
+	  GAH::utility_getline_password(password, username);
+  }
+  else
+  {
+    password = password_arg;
+  }
 
 	try
 	{
