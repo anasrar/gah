@@ -104,8 +104,6 @@ jobs:
         run: |
           C:\msys64\usr\bin\wget.exe -O sqlite.zip https://www.sqlite.org/2022/sqlite-amalgamation-3380000.zip
           C:\msys64\usr\bin\unzip.exe -j sqlite.zip -d sqlite3
-          C:\msys64\usr\bin\wget.exe -O sqlite_windows.zip https://www.sqlite.org/2022/sqlite-dll-win64-x64-3380000.zip
-          C:\msys64\usr\bin\unzip.exe -j sqlite_windows.zip -d sqlite3
 
       - name: Add MSVC 🧰
         uses: ilammy/msvc-dev-cmd@v1
