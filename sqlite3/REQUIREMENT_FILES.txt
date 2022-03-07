@@ -1,5 +1,4 @@
+shell.c
 sqlite3.c
 sqlite3.h
-# WINDOWS ONLY
-sqlite3.deff
-sqlite3.dll
+sqlite3ext.h
