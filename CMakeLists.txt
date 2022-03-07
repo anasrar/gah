@@ -2,28 +2,31 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(DEFINED ENV{WITHCLANG})
-     set(CMAKE_GENERATOR_TOOLSET "ClangCL")
-endif()
+IF()
+     set(CMAKE_GENERATOR_PLATFORM x64)
+ENDIF()
 
 project(gah VERSION 1.0.0)
-if(DEFINED ENV{WITHCLANG})
-     project(${PROJECT_NAME} LANGUAGES "CXX")
-endif()
 file(GLOB SOURCE_FILES
      "src/*.h"
      "src/*.cpp"
 )
 
-# link sqlite3
-link_directories("${CMAKE_CURRENT_SOURCE_DIR}/sqlite3")
+# static sqlite3
+file(GLOB SOURCE_SQLITE
+     "src/*.c"
+     "src/*.h"
+)
+add_library(STATIC_SQLITE STATIC ${SOURCE_SQLITE})
+find_package(Threads REQUIRED)
+target_link_libraries(STATIC_SQLITE ${CMAKE_DL_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE "GAH_VERSION=\"${PROJECT_VERSION}\"")
 
 # add sqlite3
 include_directories("sqlite3")
-target_link_libraries (${PROJECT_NAME} PRIVATE sqlite3)
+target_link_libraries (${PROJECT_NAME} PRIVATE STATIC_SQLITE)
 
 # add argparse
 include_directories("submodules/argparse/include")
