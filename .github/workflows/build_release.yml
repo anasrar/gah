@@ -38,11 +38,14 @@ jobs:
           name: uploads
           path: builds
 
-      - name: Unzip Linux AppImage 📥
+      - name: Unzip Linux AppImage and Windows Exe 📥
         run: |
           unzip -j builds/gah_linux_appimage.zip -d builds
           rm builds/gah_linux_appimage.zip
           mv "builds/gah-$(git rev-parse --short HEAD)-$(uname -m).AppImage" "builds/gah-$(uname -m).AppImage"
+          unzip -j builds/gah_windows_git_bash.zip -d builds
+          mv builds/gah.exe builds/gah_git_bash.exe
+          unzip -j builds/gah_windows.zip -d builds
 
       - name: Create Release and Upload Assets 🎁
         uses: marvinpinto/action-automatic-releases@v1.2.1
@@ -53,7 +56,7 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease == 'true' }}
           automatic_release_tag: ${{ github.event.inputs.release_tag }}
           files: |
-            builds/*.zip
+            builds/*.exe
             builds/*.AppImage
 
   build-linux:
