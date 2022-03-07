@@ -14,8 +14,8 @@ file(GLOB SOURCE_FILES
 
 # static sqlite3
 file(GLOB SOURCE_SQLITE
-     "src/*.c"
-     "src/*.h"
+     "sqlite3/*.c"
+     "sqlite3/*.h"
 )
 add_library(STATIC_SQLITE STATIC ${SOURCE_SQLITE})
 find_package(Threads REQUIRED)
