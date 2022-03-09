@@ -1,0 +1,178 @@
+name: Build and Test
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    name: Build Linux 🖥
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Download and Unzip SQLite 📥
+        run: |
+          wget -O sqlite.zip https://www.sqlite.org/2022/sqlite-amalgamation-3380000.zip
+          unzip -j sqlite.zip -d sqlite3
+
+      - name: Build 🛠
+        env:
+          CC: gcc-9
+          CXX: g++-9
+        run: |
+          chmod +x build.sh
+          ./build.sh
+          chmod +x pack_appimage.sh
+          ./pack_appimage.sh
+
+      - name: Zipping 📦
+        run: |
+          zip -r gah_linux_appimage.zip *.AppImage*
+
+      - name: Upload Artifact 📤
+        uses: actions/upload-artifact@v2
+        with:
+          name: uploads
+          path: |
+            gah_linux_appimage.zip
+
+  build-windows:
+    name: Build Windows 🖥
+    runs-on: windows-2019
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Download and Unzip SQLite 📥
+        run: |
+          C:\msys64\usr\bin\wget.exe -O sqlite.zip https://www.sqlite.org/2022/sqlite-amalgamation-3380000.zip
+          C:\msys64\usr\bin\unzip.exe -j sqlite.zip -d sqlite3
+
+      - name: Add MSVC 🧰
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Build 🛠
+        run: .\build.bat
+
+      - name: Zipping 📦
+        run: |
+          cd build\bin\Release
+          C:\msys64\usr\bin\zip.exe -r ..\..\..\gah_windows.zip .
+
+      - name: Upload Artifact 📤
+        uses: actions/upload-artifact@v2
+        with:
+          name: uploads
+          path: gah_windows.zip
+
+      - name: Build For Git Bash 🛠
+        run: .\build_gitbash.bat
+
+      - name: Zipping 📦
+        run: |
+          cd build\bin\Release
+          C:\msys64\usr\bin\zip.exe -r ..\..\..\gah_windows_git_bash.zip .
+
+      - name: Upload Artifact 📤
+        uses: actions/upload-artifact@v2
+        with:
+          name: uploads
+          path: gah_windows_git_bash.zip
+
+  test-linux:
+    name: Test Linux 🕵
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-windows]
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+
+      - name: Download Zip File 📥
+        uses: actions/download-artifact@v2
+        with:
+          name: uploads
+          path: builds
+
+      - name: Unzip Linux AppImage 📥
+        run: |
+          unzip -j builds/gah_linux_appimage.zip -d builds
+          mv "builds/gah-$(git rev-parse --short HEAD)-$(uname -m).AppImage" "builds/gah-$(uname -m).AppImage"
+          chmod +x "builds/gah-$(uname -m).AppImage"
+
+      - name: Test List 👷
+        run: |
+          eval "./builds/gah-$(uname -m).AppImage list"
+
+      - name: Test Add 👷
+        run: |
+          eval "./builds/gah-$(uname -m).AppImage add TEST_00 USER_LINUX ghp_TOKEN 2023-12-31 --password SECURE"
+          eval "./builds/gah-$(uname -m).AppImage add TEST_01 USER_LINUX ghp_TOKEN 2023-12-31 --password SECURE_PASSWORD"
+          eval "./builds/gah-$(uname -m).AppImage list"
+
+      - name: Test Clipboard 👷
+        run: |
+          eval "./builds/gah-$(uname -m).AppImage clipboard 1 --password SECURE --show"
+          eval "./builds/gah-$(uname -m).AppImage clipboard 2 --password SECURE_PASSWORD --show"
+
+      - name: Test Remove 👷
+        run: |
+          eval "./builds/gah-$(uname -m).AppImage remove 2"
+          eval "./builds/gah-$(uname -m).AppImage list"
+
+      - name: Zipping Database File 📦
+        run: |
+          zip -j database.zip ~/.gahdb
+
+      - name: Upload Artifact 📤
+        uses: actions/upload-artifact@v2
+        with:
+          name: uploads
+          path: |
+            database.zip
+
+  test-windows:
+    name: Test Windows 🕵
+    runs-on: windows-2019
+    needs: [test-linux]
+    steps:
+      - name: Download Database File 📥
+        uses: actions/download-artifact@v2
+        with:
+          name: uploads
+          path: builds
+
+      - name: Unzip Database and Windows Exe 📥
+        run: |
+          C:\msys64\usr\bin\unzip.exe -j builds/database.zip -d $HOME
+          C:\msys64\usr\bin\unzip.exe -j builds/gah_windows.zip
+          Get-ChildItem $HOME
+
+      - name: Test List 👷
+        run: |
+          .\gah.exe list
+
+      - name: Test Add 👷
+        run: |
+          .\gah.exe add TEST_01 USER_WINDOWS ghp_TOKEN 2023-12-31 --password SECURE
+          .\gah.exe add TEST_02 USER_WINDOWS ghp_TOKEN 2023-12-31 --password SECURE_PASSWORD
+          .\gah.exe list
+
+      - name: Test Clipboard 👷
+        run: |
+          .\gah.exe clipboard 1 --password SECURE --show
+          .\gah.exe clipboard 2 --password SECURE --show
+
+      - name: Test Remove 👷
+        run: |
+          .\gah.exe remove 3
+          .\gah.exe list
