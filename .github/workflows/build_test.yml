@@ -24,25 +24,30 @@ jobs:
           unzip -j sqlite.zip -d sqlite3
 
       - name: Build 🛠
-        env:
-          CC: gcc-9
-          CXX: g++-9
-        run: |
-          chmod +x build.sh
-          ./build.sh
-          chmod +x pack_appimage.sh
-          ./pack_appimage.sh
+        uses: addnab/docker-run-action@v3
+        with:
+          image: alpine:3.15.4
+          options: -v ${{ github.workspace }}:/root/gah
+          run: |
+            cd /root/gah
+            apk add patch make cmake gcc g++ libxcb libxcb-dev libxcb-static libxau libxau-dev libxdmcp libxdmcp-dev
+            cd submodules/clip
+            patch -p1 < ../../clip.patch
+            cd ../../
+            chmod u+x build.sh
+            ./build.sh
 
       - name: Zipping 📦
         run: |
-          zip -r gah_linux_appimage.zip *.AppImage*
+          cd build/bin
+          zip ../../gah_linux.zip gah
 
       - name: Upload Artifact 📤
         uses: actions/upload-artifact@v2
         with:
           name: uploads
           path: |
-            gah_linux_appimage.zip
+            gah_linux.zip
 
   build-windows:
     name: Build Windows 🖥
@@ -103,31 +108,30 @@ jobs:
           name: uploads
           path: builds
 
-      - name: Unzip Linux AppImage 📥
+      - name: Unzip Linux Binary 📥
         run: |
-          unzip -j builds/gah_linux_appimage.zip -d builds
-          mv "builds/gah-$(git rev-parse --short HEAD)-$(uname -m).AppImage" "builds/gah-$(uname -m).AppImage"
-          chmod +x "builds/gah-$(uname -m).AppImage"
+          unzip -j builds/gah_linux.zip -d builds
+          chmod u+x builds/gah
 
       - name: Test List 👷
         run: |
-          eval "./builds/gah-$(uname -m).AppImage list"
+          ./builds/gah list
 
       - name: Test Add 👷
         run: |
-          eval "./builds/gah-$(uname -m).AppImage add TEST_00 USER_LINUX ghp_TOKEN 2023-12-31 --password SECURE"
-          eval "./builds/gah-$(uname -m).AppImage add TEST_01 USER_LINUX ghp_TOKEN 2023-12-31 --password SECURE_PASSWORD"
-          eval "./builds/gah-$(uname -m).AppImage list"
+          ./builds/gah add TEST_00 USER_LINUX ghp_TOKEN 2023-12-31 --password SECURE
+          ./builds/gah add TEST_01 USER_LINUX ghp_TOKEN 2023-12-31 --password SECURE_PASSWORD
+          ./builds/gah list
 
       - name: Test Clipboard 👷
         run: |
-          eval "./builds/gah-$(uname -m).AppImage clipboard 1 --password SECURE --show"
-          eval "./builds/gah-$(uname -m).AppImage clipboard 2 --password SECURE_PASSWORD --show"
+          ./builds/gah clipboard 1 --password SECURE --show
+          ./builds/gah clipboard 2 --password SECURE_PASSWORD --show
 
       - name: Test Remove 👷
         run: |
-          eval "./builds/gah-$(uname -m).AppImage remove 2"
-          eval "./builds/gah-$(uname -m).AppImage list"
+          ./builds/gah remove 2
+          ./builds/gah list
 
       - name: Zipping Database File 📦
         run: |
