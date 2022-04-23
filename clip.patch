@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8370fc3..c2cf9ec 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -80,7 +80,7 @@ elseif(APPLE)
+   endif()
+ elseif(UNIX)
+   if(HAVE_XCB_XLIB_H)
+-    target_link_libraries(clip xcb pthread)
++    target_link_libraries(clip xcb Xau Xdmcp xcb-randr pthread)
+     if(CLIP_X11_WITH_PNG AND HAVE_PNG_H AND PNG_LIBRARY)
+       target_link_libraries(clip ${PNG_LIBRARY})
+     endif()
