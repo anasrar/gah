@@ -257,7 +257,7 @@ std::string GAH::decrypt_token(std::string &token, const std::string &password)
 	while (ss >> std::hex >> cc)
 		encrypted_token.push_back(cc);
 
-  std::uint64_t encrypted_size;
+	std::uint64_t encrypted_size;
 	std::vector<unsigned char> encrypted_size_byte(encrypted_token.end() - sizeof(encrypted_size), encrypted_token.end());
 	encrypted_size = *reinterpret_cast<const std::uint64_t*>(&encrypted_size_byte[0]);
 
@@ -292,9 +292,28 @@ bool GAH::git_check_command()
 	return 0 == system(command);
 }
 
+std::filesystem::path GAH::git_path_local_repo;
 bool GAH::git_check_local_repo()
 {
-	return std::filesystem::is_directory(".git");
+	std::filesystem::path p = std::filesystem::current_path();
+	int counter = 0;
+	while (true) {
+		if (std::filesystem::is_directory(p / ".git"))
+		{
+			GAH::git_path_local_repo = p;
+			return true;
+		}
+
+		if (p == p.root_directory()) return false;
+		p = p.parent_path();
+
+		if (counter > 100)
+		{
+			return false;
+		}
+		counter++;
+	}
+	return false;
 }
 
 void GAH::git_check_command_and_local_repo()
@@ -314,7 +333,7 @@ void GAH::git_check_command_and_local_repo()
 std::map<std::string, std::string> GAH::git_get_remotes()
 {
 	std::map<std::string, std::string> result{};
-	std::ifstream file(".git/config");
+	std::ifstream file(GAH::git_path_local_repo / ".git/config");
 	std::string config_ini((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
 	std::regex regex_token("remote \"(.+)\"\\]\n\turl = (.+)");
@@ -333,7 +352,7 @@ std::map<std::string, std::string> GAH::git_get_remotes()
 std::vector<std::string> GAH::git_get_branches()
 {
 	std::vector<std::string> result;
-	for (const auto & iter : std::filesystem::directory_iterator(".git/refs/heads"))
+	for (const auto & iter : std::filesystem::directory_iterator(GAH::git_path_local_repo / ".git/refs/heads"))
 		result.push_back(iter.path().filename().u8string());
 
 	return result;
