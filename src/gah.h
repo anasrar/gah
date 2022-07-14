@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include <string>
 #include <vector>
 #include <map>
@@ -60,6 +61,7 @@ namespace GAH
 
 	bool git_check_command();
 	bool git_check_local_repo();
+	extern std::filesystem::path git_path_local_repo;
 	void git_check_command_and_local_repo();
 	std::map<std::string, std::string> git_get_remotes();
 	std::vector<std::string> git_get_branches();
